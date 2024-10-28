@@ -57,4 +57,6 @@ def finalize_event(db: Session, event_id: int, winning_option: str):
     db.commit()
     return event
 
-
+def get_user_balance(db: Session, user_id: int):
+    user = db.query(User).filter(User.id == user_id).first()
+    return user.balance

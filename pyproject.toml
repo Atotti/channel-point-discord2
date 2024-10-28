@@ -3,8 +3,10 @@ name = "channel-point-discord"
 version = "0.1.0"
 description = "like a twitch channel point system in discord"
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 dependencies = [
-    "psycopg2-binary>=2.9.8",
-    "sqlalchemy>=1.4.54",
+    "discord>=2.3.2",
+    "psycopg2-binary>=2.9.10",
+    "python-dotenv>=1.0.1",
+    "sqlalchemy>=2.0.36",
 ]

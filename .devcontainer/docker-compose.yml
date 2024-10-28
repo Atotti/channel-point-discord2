@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    platform: linux/amd64 # rosetta で arm64 がエミュレーションされる
+    command: sleep infinity
+    volumes:
+      - ../..:/workspaces:cached

@@ -1,0 +1,13 @@
+[project]
+name = "2024-seminar"
+version = "0.1.0"
+description = "seminar tmp repo"
+readme = "README.md"
+requires-python = ">=3.6"
+dependencies = [
+    "numpy",
+    "scipy",
+    "matplotlib",
+    "librosa",
+    "ipykernel>=5.5.6",
+]

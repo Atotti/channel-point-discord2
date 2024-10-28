@@ -60,3 +60,16 @@ def finalize_event(db: Session, event_id: int, winning_option: str):
 def get_user_balance(db: Session, user_id: int):
     user = db.query(User).filter(User.id == user_id).first()
     return user.balance
+
+def close_event(db: Session, event_id: int):
+    event = db.query(Event).filter(Event.id == event_id).first()
+    event.available = False
+    db.commit()
+    return event
+
+def get_event(db: Session, event_id: int):
+    event = db.query(Event).filter(Event.id == event_id).first()
+    return event
+
+def get_all_users(db: Session):
+    return db.query(User).all()

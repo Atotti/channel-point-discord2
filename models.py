@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from db import Base
 
@@ -17,6 +17,7 @@ class Event(Base):
     option_1 = Column(String)  # 選択肢1
     option_2 = Column(String)  # 選択肢2
     winning_option = Column(String, nullable=True)  # 勝った方の選択肢
+    available = Column(Boolean, default=True)  # イベントが有効かどうか
     bets = relationship("Bet", back_populates="event")
 
 class Bet(Base):

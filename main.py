@@ -1,11 +1,13 @@
 import discord
 from discord.ext import commands
-from discord.ui import Modal, TextInput
+
 import os
 from dotenv import load_dotenv
 from db import SessionLocal
 
-from service import create_user, create_event, place_bet, finalize_event, get_user_balance
+from service import create_user
+from commponent import CreateEventModal, user_points_embed
+
 
 load_dotenv()
 
@@ -17,31 +19,18 @@ bot = commands.Bot(command_prefix="/", intents=discord.Intents.all())
 
 db = SessionLocal()
 
-class CreateEventModal(Modal, title="投票 新規作成"):
-    title = TextInput(label="タイトル", placeholder="Voteのタイトルを入力してください", style=discord.TextStyle.short)
-    option_1 = TextInput(label="選択肢1", placeholder="選択肢1を入力してください", style=discord.TextStyle.short)
-    option_2 = TextInput(label="選択肢2", placeholder="選択肢2を入力してください", style=discord.TextStyle.short)
-
-    async def on_submit(self, interaction: discord.Interaction):
-        event = create_event(db, self.title.value, self.option_1.value, self.option_2.value)
-        await interaction.response.send_message(f"「{event.title}」を作成しました。") # ここで作成した投票の情報を表示する
-
-@bot.tree.command(name="create_vote", description="新しい投票を作成します。")
+@bot.tree.command(name="create_vote", description="新しいbetを作成します。")
 async def create_vote(interaction: discord.Interaction):
-    # モーダルを表示
-    await interaction.response.send_modal(CreateEventModal())
+    await interaction.response.send_modal(CreateEventModal(db))
 
-@bot.tree.command(name="my_points", description="ポイントを取得します。")
+@bot.tree.command(name="my_points", description="自分の残高を取得します。")
 async def my_points(interaction: discord.Interaction):
-    points = get_user_balance(db, interaction.user.id)
-    await interaction.response.send_message(f"{interaction.user.name}のポイントは{points}です。")
+    await user_points_embed(db, interaction.user, interaction.channel)
 
 @bot.tree.command(name="register", description="ユーザーを作成します。")
 async def register(interaction: discord.Interaction):
     user = create_user(db, interaction.user.name, DEFAULT_USER_BALANCE)
-    await interaction.response.send_message(f"{user.name}を登録しました。")
-
-
+    await interaction.response.send_message(f"{interaction.user.mention} {user.name}を登録しました。")
 
 
 @bot.event

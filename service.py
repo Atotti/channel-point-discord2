@@ -1,8 +1,12 @@
 from sqlalchemy.orm import Session
 from models import User, Event, Bet
+from command_error import CommandValueError
 
-def create_user(db: Session, name: str, balance: float):
-    new_user = User(name=name, balance=balance)
+def create_user(db: Session, id: str, name: str, balance: float):
+    existing_user = db.query(User).filter(User.id == id).first()
+    if existing_user:
+        raise CommandValueError("ユーザーIDが既に存在します")
+    new_user = User(id=id, name=name, balance=balance)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -28,13 +32,17 @@ def place_bet(db: Session, user_id: int, event_id: int, option: str, amount: flo
     event = db.query(Event).filter(Event.id == event_id).first()
 
     if user.balance < amount:
-        raise ValueError("残高が不足しています")
+        raise CommandValueError("残高が不足しています")
 
     if option not in [event.option_1, event.option_2]:
-        raise ValueError("無効な選択肢です")
+        raise CommandValueError("無効な選択肢です")
 
     user.balance -= amount
-    bet = Bet(user_id=user_id, event_id=event_id, option=option, amount=amount)
+    bet = db.query(Bet).filter(Bet.user_id == user_id, Bet.event_id == event_id, Bet.option == option).first()
+    if bet:
+        bet.amount += amount
+    else:
+        bet = Bet(user_id=user_id, event_id=event_id, option=option, amount=amount)
     db.add(bet)
     db.commit()
     db.refresh(bet)
@@ -43,7 +51,7 @@ def place_bet(db: Session, user_id: int, event_id: int, option: str, amount: flo
 def finalize_event(db: Session, event_id: int, winning_option: str):
     event = db.query(Event).filter(Event.id == event_id).first()
     if event.winning_option is not None:
-        raise ValueError("このイベントはすでに確定しています")
+        raise CommandValueError("このイベントはすでに確定しています")
 
     event.winning_option = winning_option
     winning_bets = db.query(Bet).filter(Bet.event_id == event_id, Bet.option == winning_option).all()

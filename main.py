@@ -26,10 +26,11 @@ async def create_vote(interaction: discord.Interaction):
 @bot.tree.command(name="my_points", description="自分の残高を取得します。")
 async def my_points(interaction: discord.Interaction):
     await user_points_embed(db, interaction.user, interaction.channel)
+    await interaction.response.send_message("残高を取得しました。")
 
 @bot.tree.command(name="register", description="ユーザーを作成します。")
 async def register(interaction: discord.Interaction):
-    user = create_user(db, interaction.user.name, DEFAULT_USER_BALANCE)
+    user = create_user(db, interaction.user.id ,interaction.user.name, DEFAULT_USER_BALANCE)
     await interaction.response.send_message(f"{interaction.user.mention} {user.name}を登録しました。")
 
 

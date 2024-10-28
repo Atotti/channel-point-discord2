@@ -1,11 +1,11 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Boolean, BigInteger
 from sqlalchemy.orm import relationship
 from db import Base
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(BigInteger, primary_key=True, index=True)
     name = Column(String, index=True)
     balance = Column(Float, default=0.0)
 
@@ -24,7 +24,7 @@ class Bet(Base):
     __tablename__ = "bets"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(BigInteger, ForeignKey("users.id"))
     event_id = Column(Integer, ForeignKey("events.id"))
     option = Column(String)  # ユーザーが賭けた選択肢
     amount = Column(Float)  # 賭け金額

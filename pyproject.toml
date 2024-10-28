@@ -1,13 +1,10 @@
 [project]
-name = "2024-seminar"
+name = "channel-point-discord"
 version = "0.1.0"
-description = "seminar tmp repo"
+description = "like a twitch channel point system in discord"
 readme = "README.md"
 requires-python = ">=3.6"
 dependencies = [
-    "numpy",
-    "scipy",
-    "matplotlib",
-    "librosa",
-    "ipykernel>=5.5.6",
+    "psycopg2-binary>=2.9.8",
+    "sqlalchemy>=1.4.54",
 ]

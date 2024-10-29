@@ -1,16 +1,23 @@
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+FROM python:3.11-slim
 
-# 環境変数の設定
-ENV PYTHONUNBUFFERED 1
-ENV DATABASE_URL=postgresql://postgres:password@db:5432/betting_db
+# 環境変数を設定
+ENV PYTHONUNBUFFERED=1
+ENV PYTHONDONTWRITEBYTECODE=1
 
-# 必要なパッケージをインストール
-COPY requirements.txt /tmp/pip-tmp/
-RUN pip install --no-cache-dir -r /tmp/pip-tmp/requirements.txt && rm -rf /tmp/pip-tmp
-
-# アプリケーションファイルをコピー
-COPY . /app
+# 作業ディレクトリを作成
 WORKDIR /app
 
-# アプリケーションの起動コマンド
-CMD ["python", "main:app"]
+# 必要なパッケージをインストール
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Pythonの依存関係をインストール
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# アプリケーションのコードをコピー
+COPY . /app
+
+CMD ["python", "main.py" ]
